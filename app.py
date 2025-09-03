@@ -2,18 +2,20 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import os
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  # required for session security
+app.secret_key = os.urandom(24)  # Required for session security
 
-# ---- Dummy credentials (later you can connect DB) ----
-VALID_USERNAME = "admin"
-VALID_PASSWORD = "password123"
+# ---- In-memory user storage (later replace with DB) ----
+users = {"admin": "password123"}   # default admin user
+user_workouts = {"admin": []}      # workouts per user
 
 @app.route("/")
 def home():
-    # if logged in, show welcome page
     if "username" in session:
-        return render_template("home.html", username=session["username"])
-    return redirect(url_for("login"))
+        username = session["username"]
+        return render_template("home.html", username=username)
+    else:
+        flash("Please log in first!", "warning")
+        return redirect(url_for("login"))
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -21,14 +23,68 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        if username == VALID_USERNAME and password == VALID_PASSWORD:
+        if username in users and users[username] == password:
             session["username"] = username
-            flash("Login successful!", "success")
+            user_workouts.setdefault(username, [])
+            flash(f"Welcome back, {username}!", "success")
             return redirect(url_for("home"))
         else:
             flash("Invalid username or password", "danger")
 
     return render_template("login.html")
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if username in users:
+            flash("Username already exists!", "danger")
+        elif not username or not password:
+            flash("Please fill in all fields", "warning")
+        else:
+            # add new user
+            users[username] = password
+            user_workouts[username] = []  # each user has own workout list
+            flash("Registration successful! You can now log in.", "success")
+            return redirect(url_for("login"))
+
+    return render_template("register.html")
+
+@app.route("/add_workout", methods=["POST"])
+def add_workout():
+    if "username" not in session:
+        flash("Please log in first!", "warning")
+        return redirect(url_for("login"))
+
+    workout = request.form.get("workout")
+    duration = request.form.get("duration")
+
+    if not workout or not duration:
+        flash("Please enter both workout and duration.", "danger")
+    else:
+        try:
+            duration = int(duration)
+            username = session["username"]
+            user_workouts.setdefault(username, []).append(
+                {"workout": workout, "duration": duration}
+            )
+            flash(f"Workout '{workout}' added successfully!", "success")
+        except ValueError:
+            flash("Duration must be a number.", "danger")
+
+    return redirect(url_for("home"))
+
+@app.route("/workouts")
+def view_workouts():
+    if "username" not in session:
+        flash("Please log in first!", "warning")
+        return redirect(url_for("login"))
+
+    username = session["username"]
+    workouts = user_workouts.get(username, [])
+    return render_template("workouts.html", username=username, workouts=workouts)
 
 @app.route("/logout")
 def logout():
