@@ -53,6 +53,7 @@ def register():
     return render_template("register.html")
 
 @app.route("/add_workout", methods=["POST"])
+@app.route("/add_workout", methods=["POST"])
 def add_workout():
     if "username" not in session:
         flash("Please log in first!", "warning")
@@ -60,21 +61,29 @@ def add_workout():
 
     workout = request.form.get("workout")
     duration = request.form.get("duration")
+    username = session["username"]
 
     if not workout or not duration:
         flash("Please enter both workout and duration.", "danger")
     else:
         try:
             duration = int(duration)
-            username = session["username"]
-            user_workouts.setdefault(username, []).append(
-                {"workout": workout, "duration": duration}
-            )
-            flash(f"Workout '{workout}' added successfully!", "success")
+
+            # check for duplicate workout name (case-insensitive)
+            existing = [w["workout"].lower() for w in user_workouts.get(username, [])]
+            if workout.lower() in existing:
+                flash(f"Workout '{workout}' already exists!", "danger")
+            else:
+                user_workouts.setdefault(username, []).append(
+                    {"workout": workout, "duration": duration}
+                )
+                flash(f"Workout '{workout}' added successfully!", "success")
+
         except ValueError:
             flash("Duration must be a number.", "danger")
 
     return redirect(url_for("home"))
+
 
 @app.route("/workouts")
 def view_workouts():

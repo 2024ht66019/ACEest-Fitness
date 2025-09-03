@@ -46,11 +46,56 @@
             text-decoration: none;
             font-weight: bold;
         }
+			.flash {
+			margin: 10px auto;
+			padding: 10px;
+			width: 60%;
+			border-radius: 5px;
+			font-weight: bold;
+			text-align: center;
+		}
+
+		/* Success = green */
+		.flash.success {
+			background-color: #d4edda;
+			color: #155724;
+			border: 1px solid #c3e6cb;
+		}
+
+		/* Error = red */
+		.flash.danger {
+			background-color: #f8d7da;
+			color: #721c24;
+			border: 1px solid #f5c6cb;
+		}
+
+		/* Warning = yellow */
+		.flash.warning {
+			background-color: #fff3cd;
+			color: #856404;
+			border: 1px solid #ffeeba;
+		}
+
+		/* Info = blue */
+		.flash.info {
+			background-color: #cce5ff;
+			color: #004085;
+			border: 1px solid #b8daff;
+		}
     </style>
 </head>
 <body>
     <h1>Welcome {{ username }} to ACEest Fitness & Gym</h1>
 
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <p class="flash">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+	
     <div class="container">
         <h2>Add Workout</h2>
         <form action="{{ url_for('add_workout') }}" method="POST">

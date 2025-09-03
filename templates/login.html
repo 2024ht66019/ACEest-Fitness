@@ -41,18 +41,47 @@
             text-decoration: none;
         }
         .flash { color: red; }
+			.flash {
+			margin: 10px auto;
+			padding: 10px;
+			width: 60%;
+			border-radius: 5px;
+			font-weight: bold;
+			text-align: center;
+		}
+
+		/* Success = green */
+		.flash.success {
+			background-color: #d4edda;
+			color: #155724;
+			border: 1px solid #c3e6cb;
+		}
+
+		/* Error = red */
+		.flash.danger {
+			background-color: #f8d7da;
+			color: #721c24;
+			border: 1px solid #f5c6cb;
+		}
+
+		/* Warning = yellow */
+		.flash.warning {
+			background-color: #fff3cd;
+			color: #856404;
+			border: 1px solid #ffeeba;
+		}
+
+		/* Info = blue */
+		.flash.info {
+			background-color: #cce5ff;
+			color: #004085;
+			border: 1px solid #b8daff;
+		}
     </style>
 </head>
 <body>
     <div class="login-box">
         <h2>Login</h2>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <p class="flash">{{ message }}</p>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
         <form method="post">
             <input type="text" name="username" placeholder="Enter Username" required>
             <input type="password" name="password" placeholder="Enter Password" required>
@@ -62,5 +91,14 @@
         <!-- 👇 Added option to register -->
         <a href="{{ url_for('register') }}">Register as a new user</a>
     </div>
+ 
+ <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <p class="flash {{ category }}">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 </body>
 </html>
