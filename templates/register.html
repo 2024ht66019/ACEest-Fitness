@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login - ACEest Fitness</title>
+    <title>Register - ACEest Fitness</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,7 +11,7 @@
             background-size: cover;
             color: white;
         }
-        .login-box {
+        .register-box {
             margin: 10% auto;
             width: 300px;
             padding: 20px;
@@ -29,23 +29,17 @@
         button {
             padding: 10px 20px;
             border: none;
-            background: orange;
+            background: green;
             color: white;
             border-radius: 5px;
             cursor: pointer;
-        }
-        a {
-            display: block;
-            margin-top: 15px;
-            color: yellow;
-            text-decoration: none;
         }
         .flash { color: red; }
     </style>
 </head>
 <body>
-    <div class="login-box">
-        <h2>Login</h2>
+    <div class="register-box">
+        <h2>Register</h2>
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, message in messages %}
@@ -54,13 +48,11 @@
           {% endif %}
         {% endwith %}
         <form method="post">
-            <input type="text" name="username" placeholder="Enter Username" required>
-            <input type="password" name="password" placeholder="Enter Password" required>
-            <button type="submit">Login</button>
+            <input type="text" name="username" placeholder="Choose Username" required>
+            <input type="password" name="password" placeholder="Choose Password" required>
+            <button type="submit">Register</button>
         </form>
-
-        <!-- 👇 Added option to register -->
-        <a href="{{ url_for('register') }}">Register as a new user</a>
+        <a href="{{ url_for('login') }}" style="color: yellow;">Already have an account? Login here</a>
     </div>
 </body>
 </html>

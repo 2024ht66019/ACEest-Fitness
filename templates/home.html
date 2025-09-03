@@ -14,13 +14,34 @@
             background-size: cover;
         }
         h1 {
-            margin-top: 20%;
-            font-size: 3em;
+            margin-top: 40px;
+            font-size: 2.5em;
             text-shadow: 2px 2px 5px black;
+        }
+        .container {
+            margin: 40px auto;
+            width: 400px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        input, button {
+            display: block;
+            width: 90%;
+            margin: 10px auto;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background: orange;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
         }
         a {
             display: block;
-            margin-top: 20px;
+            margin: 20px;
             color: yellow;
             text-decoration: none;
             font-weight: bold;
@@ -29,6 +50,20 @@
 </head>
 <body>
     <h1>Welcome {{ username }} to ACEest Fitness & Gym</h1>
-    <a href="{{ url_for('logout') }}">Logout</a>
+
+    <div class="container">
+        <h2>Add Workout</h2>
+        <form action="{{ url_for('add_workout') }}" method="POST">
+            <input type="text" name="workout" placeholder="Workout name" required>
+            <input type="number" name="duration" placeholder="Duration (minutes)" required>
+            <button type="submit">Add Workout</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Options</h2>
+        <a href="{{ url_for('view_workouts') }}">View Workouts</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
 </body>
 </html>

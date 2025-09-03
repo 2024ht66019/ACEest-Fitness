@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ username }}'s Workouts - ACEest Fitness</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: url("/static/bg.jpg") no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+        .container {
+            margin: 10% auto;
+            width: 400px;
+            background: rgba(0,0,0,0.6);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        ul { list-style-type: none; padding: 0; }
+        li { padding: 5px; border-bottom: 1px solid #ccc; text-align: left; }
+        a { display: block; margin-top: 20px; color: yellow; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>{{ username }}'s Workouts</h2>
+        {% if workouts %}
+            <ul>
+                {% for w in workouts %}
+                    <li>{{ loop.index }}. {{ w.workout }} - {{ w.duration }} minutes</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No workouts logged yet.</p>
+        {% endif %}
+        <a href="{{ url_for('home') }}">Back to Home</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</body>
+</html>
