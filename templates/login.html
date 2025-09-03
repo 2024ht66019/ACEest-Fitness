@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - ACEest Fitness</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: url("/static/bg.jpg") no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+        .login-box {
+            margin: 10% auto;
+            width: 300px;
+            padding: 20px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 10px;
+        }
+        input {
+            display: block;
+            width: 90%;
+            margin: 10px auto;
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background: orange;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .flash { color: red; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>Login</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <p class="flash">{{ message }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <form method="post">
+            <input type="text" name="username" placeholder="Enter Username" required>
+            <input type="password" name="password" placeholder="Enter Password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</body>
+</html>
