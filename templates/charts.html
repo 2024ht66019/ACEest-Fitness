@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block head %}
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+  <h2 style="margin-top:0;">Charts</h2>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+    <div>
+      <h4>Total minutes per category</h4>
+      <canvas id="workoutChart" width="400" height="300"></canvas>
+    </div>
+
+    <div>
+      <h4>Diet calories (recent)</h4>
+      <canvas id="dietChart" width="400" height="300"></canvas>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Fetch totals and render workout chart
+  fetch('{{ url_for("api_workout_totals") }}')
+    .then(r => r.json())
+    .then(data => {
+      const labels = Object.keys(data);
+      const vals = Object.values(data);
+
+      const ctx = document.getElementById('workoutChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Minutes',
+            data: vals,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    });
+
+  // Diet chart: small line of cumulative calories for last 12 entries
+  fetch('{{ url_for("api_sessions") }}')
+    .then(r => r.json())
+    .then(obj => {
+      const diet = obj.diet || [];
+      const last = diet.slice(-12);
+      const labels = last.map(e => e.timestamp);
+      const vals = last.map(e => e.calories);
+
+      const ctx2 = document.getElementById('dietChart').getContext('2d');
+      new Chart(ctx2, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Calories',
+            data: vals,
+            fill: false,
+            tension: 0.3,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    });
+</script>
+{% endblock %}
+

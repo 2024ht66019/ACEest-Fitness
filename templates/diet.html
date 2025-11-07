@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2 style="margin-top:0;">Diet Log</h2>
+
+  <div class="two-column">
+    <div>
+      <form method="post" action="{{ url_for('add_diet') }}">
+        <label>Food / Item</label>
+        <input type="text" name="food" placeholder="e.g., Banana" required>
+
+        <label>Calories (kcal)</label>
+        <input type="number" name="calories" min="0" placeholder="e.g., 100" required>
+
+        <button type="submit">Add Diet Entry</button>
+      </form>
+    </div>
+
+    <div>
+      <h3 style="margin-top:0;">Recent diet entries</h3>
+      {% if diet_entries %}
+        <table>
+          <tr><th>Time</th><th>Food</th><th>Calories</th></tr>
+          {% for e in diet_entries|reverse %}
+            <tr>
+              <td>{{ e.timestamp }}</td>
+              <td>{{ e.food }}</td>
+              <td>{{ e.calories }}</td>
+            </tr>
+          {% endfor %}
+        </table>
+      {% else %}
+        <p>No diet entries yet.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+

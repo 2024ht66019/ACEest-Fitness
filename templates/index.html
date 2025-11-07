@@ -1,48 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>ACEest Fitness Tracker</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
-        .container { background: white; padding: 30px; border-radius: 12px; width: 400px; margin: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        h2 { color: #333; text-align: center; }
-        label { display: block; margin-top: 10px; }
-        input, select { width: 100%; padding: 8px; margin-top: 4px; }
-        button { margin-top: 15px; padding: 10px; width: 100%; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .msg { color: green; text-align: center; margin-top: 10px; }
-        .error { color: red; text-align: center; margin-top: 10px; }
-        a { display: block; text-align: center; margin-top: 20px; color: #007bff; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2>🏋️ ACEest Fitness Tracker</h2>
+{% extends "base.html" %}
+{% block content %}
+  <h2 style="margin-top:0;">Log a Workout</h2>
+  <div class="two-column">
+    <div>
+      <form method="post" action="{{ url_for('add_workout') }}">
+        <label>Category</label>
+        <select name="category">
+          {% for c in categories %}
+            <option value="{{ c }}">{{ c }}</option>
+          {% endfor %}
+        </select>
 
-        {% if message %}<div class="msg">{{ message }}</div>{% endif %}
-        {% if error %}<div class="error">{{ error }}</div>{% endif %}
+        <label>Exercise</label>
+        <input type="text" name="exercise" placeholder="e.g., Jumping jacks" required>
 
-        <form method="post" action="{{ url_for('add_workout') }}">
-            <label>Category:</label>
-            <select name="category">
-                {% for cat in categories %}
-                    <option value="{{ cat }}">{{ cat }}</option>
-                {% endfor %}
-            </select>
+        <label>Duration (minutes)</label>
+        <input type="number" name="duration" min="1" placeholder="e.g., 10" required>
 
-            <label>Exercise:</label>
-            <input type="text" name="exercise" required>
+        <button type="submit">Add Session</button>
+      </form>
 
-            <label>Duration (minutes):</label>
-            <input type="number" name="duration" required>
-
-            <button type="submit">Add Session</button>
-        </form>
-
-        <a href="{{ url_for('summary') }}">View Summary</a>
+      <a href="{{ url_for('summary') }}" style="display:inline-block; margin-top:12px; color:#2563eb;">View summary →</a>
     </div>
-</body>
-</html>
+
+    <div>
+      <h3 style="margin-top:0;">Recent entries</h3>
+      {% set recent = [] %}
+      {% for cat, sessions in workouts.items() %}
+        {% for s in sessions %}
+          {% set _ = recent.append((s.timestamp, cat, s.exercise, s.duration)) %}
+        {% endfor %}
+      {% endfor %}
+      {% set recent = recent|sort(reverse=true) %}
+      {% if recent %}
+        <table>
+          <tr><th>Time</th><th>Cat</th><th>Exercise</th><th>Min</th></tr>
+          {% for t, cat, ex, dur in recent[:8] %}
+            <tr>
+              <td>{{ t }}</td>
+              <td>{{ cat }}</td>
+              <td>{{ ex }}</td>
+              <td>{{ dur }}</td>
+            </tr>
+          {% endfor %}
+        </table>
+      {% else %}
+        <p>No sessions logged yet.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
 
